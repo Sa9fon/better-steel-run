@@ -1,0 +1,5 @@
+# Songs are copyrighted recordings: bring your own, never commit them.
+sounds/*.mp3
+sounds/*.m4a
+sounds/*.wav
+sounds/*.ogg

@@ -4,15 +4,39 @@ const file = document.getElementById('file');
 const offset = document.getElementById('offset');
 const status = document.getElementById('status');
 
-// Small prefs go in sync; the Base64 MP3 goes in local because sync caps items at 8 KB.
-chrome.storage.sync.get({ track: 'sounds/horse.mp3', offset: 0 }, (prefs) => {
-  track.value = prefs.track;
-  offset.value = prefs.offset;
-  fileRow.hidden = prefs.track !== 'custom';
-});
+const fileHint = document.getElementById('fileHint');
+const access = document.getElementById('access');
 
-track.addEventListener('change', () => {
+// Bundled songs are optional (copyrighted, so not shipped): only offer the ones actually present.
+async function hasFile(path) {
+  try { return (await fetch(chrome.runtime.getURL(path))).ok; } catch { return false; }
+}
+
+async function updateFileRow() {
   fileRow.hidden = track.value !== 'custom';
+  const { customAudio } = await chrome.storage.local.get('customAudio');
+  fileHint.textContent = customAudio ? 'A song is saved. Pick another file to replace it.' : 'Upload an MP3 to get started.';
+}
+
+// Small prefs go in sync; the Base64 MP3 goes in local because sync caps items at 8 KB.
+(async () => {
+  for (const opt of [...track.options]) {
+    if (opt.value !== 'custom' && !(await hasFile(opt.value))) opt.remove();
+  }
+  const prefs = await chrome.storage.sync.get({ track: 'custom', offset: 0 });
+  track.value = [...track.options].some((o) => o.value === prefs.track) ? prefs.track : 'custom';
+  offset.value = prefs.offset;
+  await updateFileRow();
+  // Firefox makes site access opt-in; Chrome/Edge/Opera grant it at install, so this stays hidden there.
+  access.hidden = await chrome.permissions.contains({ origins: ['<all_urls>'] });
+})();
+
+track.addEventListener('change', updateFileRow);
+
+document.getElementById('grant').addEventListener('click', async () => {
+  const granted = await chrome.permissions.request({ origins: ['<all_urls>'] });
+  access.hidden = granted;
+  if (granted) show('Access granted. Refresh your episode tab.', 'ok');
 });
 
 function readAsDataURL(f) {
@@ -110,6 +134,7 @@ document.getElementById('save').addEventListener('click', async () => {
       offset: Math.max(0, Number(offset.value) || 0),
     });
     show('Saved!', 'ok');
+    updateFileRow();
   } catch (e) {
     show('Save failed: ' + e.message, 'err');
   }

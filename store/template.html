@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Better Steel Run store art</title>
+<!-- Renders the store images. Pick one with the hash: #shot1 #shot2 #shot3 #tile #marquee
+     (the 300x300 logo is drawn like the toolbar icons, not from this page). -->
+<style>
+  @font-face { font-family: 'Anton'; src: url(../fonts/anton.woff2) format('woff2'); }
+  @font-face { font-family: 'Inter'; src: url(../fonts/inter.woff2) format('woff2'); font-weight: 100 900; }
+  :root { --bg: #150d22; --panel: #221434; --line: #452a66; --gold: #f5c542; --sunset: #ff7a3d; --pink: #e84aa0; --violet: #6a2fb0; --text: #f3e9ff; --muted: #b9a6d3; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100%; height: 100%; }
+  body { font-family: 'Inter', sans-serif; color: var(--text); overflow: hidden; }
+  .art { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden;
+         background: radial-gradient(circle at 85% 20%, rgba(232,74,160,.35), transparent 45%),
+                     radial-gradient(circle at 10% 90%, rgba(255,122,61,.28), transparent 40%), var(--bg); }
+  .art:target { display: flex; }
+  .dunes { position: absolute; left: -10%; right: -10%; bottom: -22%; height: 42%; border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+           background: linear-gradient(180deg, #2a1640, #150d22); }
+  .title { font-family: 'Anton', Impact, sans-serif; text-transform: uppercase; color: var(--gold); transform: skewX(-8deg);
+           text-shadow: 4px 4px 0 #3a1552, -2px -2px 0 #3a1552, 2px -2px 0 #3a1552, -2px 2px 0 #3a1552; line-height: .95; }
+  .title span { color: #fff; }
+  .menace { position: absolute; font: 900 64px 'Yu Gothic UI', 'Yu Gothic', Meiryo, sans-serif; color: #7a3fb8; opacity: .55; line-height: .9;
+            display: flex; flex-direction: column; }
+  .ball { filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); }
+  .copy { position: relative; z-index: 1; }
+  h2 { font-family: 'Anton', sans-serif; font-weight: 400; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); }
+  ul { list-style: none; padding: 0; }
+  li { display: flex; gap: 14px; align-items: baseline; }
+  li b { color: #fff; }
+  .shot { border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px var(--line); position: relative; z-index: 1; }
+
+  /* 1280x800 screenshots */
+  #shot1, #shot2, #shot3 { align-items: center; justify-content: space-between; padding: 0 90px; }
+  #shot1 .title, #shot2 .title, #shot3 .title { font-size: 76px; margin-bottom: 18px; }
+  .lead { font-size: 26px; color: var(--muted); max-width: 620px; line-height: 1.35; margin-bottom: 34px; }
+  #shot1 li, #shot2 li, #shot3 li { font-size: 24px; margin-bottom: 18px; color: var(--muted); }
+  .flow { display: flex; flex-direction: column; gap: 18px; width: 460px; position: relative; z-index: 1; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 24px; }
+  .step h2 { font-size: 26px; margin-bottom: 6px; }
+  .step p { font-size: 19px; color: var(--muted); line-height: 1.35; }
+  .step .n { color: var(--pink); margin-right: 10px; }
+
+  /* 440x280 tile, 1400x560 marquee, 300x300 logo */
+  #tile, #marquee { align-items: center; justify-content: center; gap: 22px; }
+  /* Headless browsers won't lay out narrower than ~500px: render the tile at 2x and scale the capture down. */
+  #tile { width: 440px; height: 280px; zoom: 2; }
+  #tile .title { font-size: 44px; } #tile .tag { font-size: 15px; margin-top: 8px; color: var(--muted); }
+  #marquee { gap: 48px; } #marquee .title { font-size: 110px; } #marquee .tag { font-size: 30px; margin-top: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<template id="ballSvg">
+  <svg class="ball" viewBox="0 0 44 44" aria-hidden="true">
+    <defs><radialGradient id="steel" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fffbe8"/><stop offset=".35" stop-color="#f5c542"/><stop offset="1" stop-color="#8a5a0c"/></radialGradient></defs>
+    <circle cx="22" cy="22" r="20" fill="url(#steel)" stroke="#3a1552" stroke-width="2"/>
+    <path d="M22 22 a2 2 0 0 1 4 0 a4 4 0 0 1 -8 0 a6 6 0 0 1 12 0 a8 8 0 0 1 -16 0 a10 10 0 0 1 20 0" fill="none" stroke="#3a1552" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+</template>
+
+<section class="art" id="shot1">
+  <div class="dunes"></div>
+  <div class="menace" style="left:740px;top:70px"><b>ゴ</b><b>ゴ</b><b>ゴ</b></div>
+  <div class="copy">
+    <div class="title">Better <span>Steel</span> Run</div>
+    <p class="lead">Swap the <i>Steel Ball Run</i> ending theme for the song of your choice, synced to the video.</p>
+    <ul>
+      <li>🎵 <span><b>Your song</b>: upload any MP3 from your computer</span></li>
+      <li>🎯 <span><b>Finds the ending automatically</b> with AniSkip</span></li>
+      <li>⏱️ <span><b>Stays in sync</b>: pause, seek, speed and volume</span></li>
+    </ul>
+  </div>
+  <img class="shot" src="popup-store.png" style="width:300px">
+</section>
+
+<section class="art" id="shot2">
+  <div class="dunes"></div>
+  <div class="menace" style="left:40px;top:40px"><b>ゴ</b><b>ゴ</b><b>ゴ</b></div>
+  <div class="copy">
+    <div class="title">Mark it <span>once</span></div>
+    <p class="lead">No timestamps for an episode yet? Press <b style="color:#fff">Outro starts now</b> when the ending begins, and it's remembered for the whole show.</p>
+    <ul>
+      <li>🏇 <span><b>One click</b> to set the ending</span></li>
+      <li>🌐 <span><b>Share on AniSkip</b> so everyone else gets it too</span></li>
+      <li>🛡️ <span><b>Your choice</b>: nothing is shared without confirmation</span></li>
+    </ul>
+  </div>
+  <img class="shot" src="share-store.png" style="width:300px">
+</section>
+
+<section class="art" id="shot3">
+  <div class="dunes"></div>
+  <div class="copy">
+    <div class="title">It just <span>works</span></div>
+    <p class="lead">Only <i>Steel Ball Run</i> episodes are touched. Everything else plays normally, and the original audio returns the moment the ending is over.</p>
+    <ul>
+      <li>🔒 <span><b>No account, no tracking</b>, open source</span></li>
+      <li>📺 <span><b>Netflix, Crunchyroll</b> and popular anime sites</span></li>
+    </ul>
+  </div>
+  <div class="flow">
+    <div class="step"><h2><span class="n">1</span>AniSkip</h2><p>Community-voted ending time for the exact episode</p></div>
+    <div class="step"><h2><span class="n">2</span>Your mark</h2><p>Saved with "Outro starts now" for the show</p></div>
+    <div class="step"><h2><span class="n">3</span>Fallback</h2><p>A fixed number of seconds before the end</p></div>
+  </div>
+</section>
+
+<section class="art" id="tile">
+  <div class="ballHost" style="width:92px;height:92px"></div>
+  <div><div class="title">Better<br><span>Steel</span> Run</div><div class="tag">Your ending theme, every episode</div></div>
+</section>
+
+<section class="art" id="marquee">
+  <div class="dunes"></div>
+  <div class="menace" style="right:60px;top:50px"><b>ゴ</b><b>ゴ</b><b>ゴ</b></div>
+  <div class="ballHost copy" style="width:230px;height:230px"></div>
+  <div class="copy"><div class="title">Better <span>Steel</span> Run</div><div class="tag">Swap the <i>Steel Ball Run</i> ending for your own song</div></div>
+</section>
+
+
+<script>
+  // Stamp the shared ball SVG into each placeholder (unique gradient ids per copy).
+  document.querySelectorAll('.ballHost').forEach((host, i) => {
+    host.innerHTML = document.getElementById('ballSvg').innerHTML.replaceAll('steel', 'steel' + i);
+    host.firstElementChild.style.cssText = 'width:100%;height:100%';
+  });
+</script>
+</body>
+</html>

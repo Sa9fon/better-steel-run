@@ -6,12 +6,12 @@
 
 <p align="center">
   <b>Swap the ending theme of <i>JoJo's Bizarre Adventure: Steel Ball Run</i> for the song of your choice, perfectly synced to the video.</b><br>
-  A Chrome / Edge extension (Manifest V3). No account, no tracking, no build step.
+  A Chrome / Edge / Opera / Firefox extension (Manifest V3). No account, no tracking, no build step.
 </p>
 
 <p align="center">
   <img alt="Manifest V3" src="https://img.shields.io/badge/manifest-v3-6a2fb0">
-  <img alt="Chrome and Edge" src="https://img.shields.io/badge/browser-Chrome%20%7C%20Edge-f5c542">
+  <img alt="Chrome, Edge, Opera and Firefox" src="https://img.shields.io/badge/browser-Chrome%20%7C%20Edge%20%7C%20Opera%20%7C%20Firefox-f5c542">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-e84aa0">
   <img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-ff7a3d">
 </p>
@@ -30,7 +30,7 @@ When the ending of a *Steel Ball Run* episode starts, Better Steel Run mutes the
 
 ## Features
 
-- 🎵 **Your ending theme.** Pick a bundled track or upload any MP3 from your computer.
+- 🎵 **Your ending theme.** Upload any MP3 from your computer, or drop presets into `sounds/`.
 - 🎯 **Finds the ending automatically.** Uses [AniSkip](https://aniskip.com)'s community-voted timestamps for the exact episode.
 - ⏱️ **Frame-accurate sync.** Pause, seek, playback speed and volume all carry over to your song.
 - 🏇 **"Outro starts now" button.** No AniSkip data yet? Press it once when the ending begins and it's remembered for the whole show.
@@ -65,11 +65,17 @@ The extension only acts on *Steel Ball Run* episodes, and leaves everything else
 
 ## Install
 
+**From a store** (coming soon): Chrome Web Store · Edge Add-ons · Opera Add-ons · Firefox Add-ons. Open the popup, choose **Custom Local File**, upload your MP3 and hit **Save**. On Firefox, also click **Grant access** in the popup the first time.
+
+**From source** (Chrome, Edge, Opera, Brave…):
+
 1. **Download** this repo: click **Code → Download ZIP** and unzip it, or `git clone` it.
-2. **Add your songs.** Put your MP3s in the `sounds/` folder, named `horse.mp3` and `chain.mp3`. They're not included, because they're copyrighted recordings. You can also skip this and use **Custom Local File** in the popup.
+2. **Add your songs (optional).** Put MP3s in the `sounds/` folder named `horse.mp3` and `chain.mp3` to get them as presets in the popup. They're not included, because they're copyrighted recordings. Or skip this and use **Custom Local File**.
 3. Open `chrome://extensions` (or `edge://extensions`) and turn on **Developer mode**.
 4. Click **Load unpacked** and select the folder that contains `manifest.json`.
 5. Pin **Better Steel Run** from the puzzle-piece menu, pick your track, and hit **Save**.
+
+**From source on Firefox (140+):** open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick `manifest.json`, then click **Grant access** in the popup. Temporary add-ons are removed when Firefox restarts.
 
 ## How it finds the ending
 
@@ -82,6 +88,8 @@ For each episode, the first source that has an answer wins:
 Timestamps are measured from the *end* of the episode, so they still line up when a site's copy has a few extra seconds at the start.
 
 ## Privacy and permissions
+
+Full policy: [PRIVACY.md](PRIVACY.md).
 
 - **No accounts, no analytics.** Settings live in your browser's extension storage.
 - **Network requests:** the show name goes to AniList, and the MyAnimeList ID and episode number go to AniSkip, only on *Steel Ball Run* pages.
@@ -110,6 +118,8 @@ Contributions are very welcome, especially **support for more websites**. The go
 - 📺 **Other shows?** The extension is locked to *Steel Ball Run* via `ONLY_SHOW` in `content.js`. If you'd like to make it configurable, a PR is welcome.
 
 The project has no build step and no dependencies: plain JavaScript, HTML and CSS. Edit, reload the extension, refresh the tab.
+
+**Maintainers:** `build.ps1` packages `dist/better-steel-run-<version>.zip` (the upload for all four stores), `store/render.ps1` regenerates the store images, and [`store/LISTING.md`](store/LISTING.md) has the listing text and permission justifications. Bump `version` in `manifest.json` before each store upload.
 
 ## Credits
 

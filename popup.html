@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8">
   <title>Better Steel Run</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&display=swap">
   <style>
+    /* Bundled (SIL Open Font License, see fonts/): no requests to third parties, works offline. */
+    @font-face { font-family: 'Anton'; src: url(fonts/anton.woff2) format('woff2'); font-weight: 400; }
+    @font-face { font-family: 'Inter'; src: url(fonts/inter.woff2) format('woff2'); font-weight: 100 900; }
+
     :root {
       --bg: #150d22;
       --panel: #221434;
@@ -129,7 +132,18 @@
       border-radius: 6px;
       font: inherit;
     }
+    input[type=file]::file-selector-button {
+      margin-right: 8px;
+      padding: 4px 10px;
+      font: 600 12px 'Inter', sans-serif;
+      color: var(--gold);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      cursor: pointer;
+    }
     select:focus, input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+    .note { margin: 0 0 10px; color: var(--muted); line-height: 1.4; }
     .hint { display: block; margin-top: 3px; font-weight: 400; font-size: 11px; opacity: .8; }
 
     button {
@@ -214,6 +228,12 @@
   </header>
 
   <main>
+    <section class="card" id="access" hidden>
+      <h2>One more step</h2>
+      <p class="note">Your browser needs your OK before the extension can reach video players.</p>
+      <button id="grant">Grant access</button>
+    </section>
+
     <section class="card">
       <h2>Ending theme</h2>
       <label>Track
@@ -226,6 +246,7 @@
 
       <label id="fileRow" hidden>MP3 file
         <input type="file" id="file" accept="audio/mpeg,.mp3">
+        <span class="hint" id="fileHint"></span>
       </label>
 
       <label>Seconds before end

@@ -30,14 +30,17 @@ const SITE_RULES = {
   'shiro.so': { anilistId: () => location.pathname.match(/^\/anime\/(\d+)-/)?.[1] },
 };
 
+// null = unknown: Firefox has no ancestorOrigins, so its frames just wait for a supported top page to answer.
 function topHostname() {
   if (window === top) return location.hostname;
-  try { return new URL(location.ancestorOrigins[location.ancestorOrigins.length - 1]).hostname; } catch { return ''; }
+  const origins = location.ancestorOrigins;
+  if (!origins) return null;
+  try { return new URL(origins[origins.length - 1]).hostname; } catch { return ''; }
 }
 const matchSite = (host) => (list) => list.find((s) => host === s || host.endsWith('.' + s));
 const HOST = topHostname();
-const ENABLED = !!matchSite(HOST)(SITES);
-const rule = SITE_RULES[matchSite(HOST)(Object.keys(SITE_RULES))] || {};
+const ENABLED = HOST === null || !!matchSite(HOST)(SITES);
+const rule = SITE_RULES[matchSite(HOST || '')(Object.keys(SITE_RULES))] || {};
 
 let OFFSET_BEFORE_END = 0; // manual fallback from the popup; 0 = off
 let src = null;    // bundled track URL or Base64 data URL
@@ -50,9 +53,11 @@ let showKey = 'outro:' + location.hostname; // top frame: storage key for per-sh
 let lookup = { href: null }; // top frame: episode lookup for the current URL (promises)
 let lastHref = null;
 let ticks = 0;
+let started = false;
 
+// No song chosen yet -> src stays null and nothing is ever muted.
 async function loadPrefs() {
-  const p = await chrome.storage.sync.get({ track: 'sounds/horse.mp3', offset: 0 });
+  const p = await chrome.storage.sync.get({ track: 'custom', offset: 0 });
   OFFSET_BEFORE_END = Math.max(0, Number(p.offset) || 0);
   src = p.track === 'custom'
     ? (await chrome.storage.local.get('customAudio')).customAudio || null
@@ -223,7 +228,7 @@ function tick() {
   const v = findVideo();
   if (v !== video) { stop(); video = v; } // player swapped (next episode, etc.)
   if (!video || !src) return;
-  if (auto === undefined || auto.off) return stop(); // not known yet to be the target show, or another show
+  if (auto === undefined || auto?.off) return stop(); // not known yet to be the target show, or another show
 
   const [fromEnd, length] = auto ? [auto.fromEnd, auto.length] : [OFFSET_BEFORE_END, OUTRO_DURATION];
   if (!fromEnd) return stop(); // no AniSkip data, no mark, and manual offset is off
@@ -236,6 +241,7 @@ function tick() {
     if (video.muted) return; // user muted it (or a muted autoplay preview): leave alone
     active = true;
     audio = new Audio(src);
+    audio.onerror = () => { src = null; stop(); }; // e.g. a bundled song file that isn't there: give the sound back
   }
 
   video.muted = true; // re-apply: site UIs sometimes unmute on their own
@@ -263,12 +269,14 @@ if (ENABLED) {
       if (typeof e.data?.streamHelperMark === 'number') chrome.storage.sync.set({ [showKey]: e.data.streamHelperMark });
     } else if (e.data && typeof e.data === 'object' && 'streamHelper' in e.data) {
       auto = e.data.streamHelper;
+      start(); // Firefox frames start once a supported top page answers
     }
   });
 
   // Popup buttons. Messages go to every frame; only the frame that can answer responds.
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg === 'streamHelper:episode' && window === top) {
+      if (!isTargetShow()) return sendResponse(null); // other shows are never looked up
       (lookup.info || findEpisode(pageName()).catch(() => null)).then(sendResponse);
       return true; // async response
     }
@@ -287,5 +295,13 @@ if (ENABLED) {
     }
   });
 
+  // Frames that can't tell their top site (Firefox) stay idle, only pinging the top page, until it answers.
+  if (HOST === null) setInterval(() => { if (!started) top.postMessage('streamHelper:need', '*'); }, 2000);
+  else start();
+}
+
+function start() {
+  if (started) return;
+  started = true;
   loadPrefs().then(() => setInterval(tick, 250));
 }

@@ -3,3 +3,6 @@ sounds/*.mp3
 sounds/*.m4a
 sounds/*.wav
 sounds/*.ogg
+
+# Built store zips (build.ps1)
+dist/
